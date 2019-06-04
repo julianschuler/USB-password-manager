@@ -1,0 +1,9 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Let Linguist ignore V-USB files
+usbdrv/* linguist-vendored
+
+*.o linguist-vendored
+*.obj linguist-vendored
+*.elf linguist-vendored
