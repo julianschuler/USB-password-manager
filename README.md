@@ -1,6 +1,6 @@
 # USB password manager
 ## Overview
-This USB device is able to generate and store a secure password with up to 256 digits (set to 100 digits by default). The password manager is able to identify itself as USB HID keyboard, therefore it works with any PC and OS without having to install further drivers.
+This USB device based on the ATtiny45 is able to generate and store a secure password with up to 256 digits (set to 100 digits by default). The password manager is able to identify itself as USB HID keyboard, therefore it works with any PC and OS without having to install further drivers.
 
 ## How to use
 #### Generating the password
@@ -13,7 +13,7 @@ To access the stored password, plug the device into an USB port and toggle Caps 
 The USB password manager includes the [V-USB code](https://www.obdev.at/products/vusb/) by Objective Developement to emulate a USB HID keyboard to retrieve the Caps Lock state and type in the instructions and password. To generate the password, [this approach](https://gist.github.com/endolith/2568571) of an AVR hardware random generator by [endolith](https://github.com/endolith) was used.
 
 ## License
-As the V-USB code, this library is licensed under GNU GPLv3, see [`LICENSE.txt`](LICENSE.txt) for further information.
+As the V-USB code, this project is licensed under GNU GPLv3, see [`LICENSE.txt`](LICENSE.txt) for further information.
 
 ## Todo
 - add PCB design files
