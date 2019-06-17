@@ -16,7 +16,6 @@ The USB password manager includes the [V-USB code](https://www.obdev.at/products
 As the V-USB code, this project is licensed under GNU GPLv3, see [`LICENSE.txt`](LICENSE.txt) for further information.
 
 ## Todo
-- add PCB design files
-- add built instructions
+- add build instructions
 - add pictures
 - add security evaluations
