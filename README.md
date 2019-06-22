@@ -1,6 +1,6 @@
 # USB password manager
 ## Overview
-This USB device based on the ATtiny45 is able to generate and store a secure password with up to 256 digits (set to 100 digits by default). The password manager is able to identify itself as USB HID keyboard, therefore it works with any PC and OS without having to install further drivers.
+This USB device based on the ATtiny85 is able to generate and store a secure password with up to 510 digits (set to 100 digits by default). The password manager is able to identify itself as USB HID keyboard, therefore it works with any PC and OS without having to install further drivers.
 
 ## How to use
 #### Generating the password
