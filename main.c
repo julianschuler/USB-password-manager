@@ -14,7 +14,7 @@
 #define SEND_RETURN				1			// set to 1 to send a return after the password has been typed
 #define PASSWORD_VISIBLE		0			// set to 1 to show the password during generation (not recommended)
 #define HEX_LETTERS_CAPITAL		1			// set to 1 to use capital letters in the password
-#define LANGUAGE				DE			// sets the language, available options: DE, EN
+#define LANGUAGE				EN			// sets the language, available options: EN, DE
 #define BUTTON_PRESS_TIME_MS	2500		// mimimum time the button has to be pressed for generating a new password
 
 #if LANGUAGE == DE
@@ -31,8 +31,8 @@
 
 
 #define BUTTON_PIN 				B,1
-#define OSCCAL_INDEX			(uint8_t*)(255)
-#define IS_CAL_INDEX			(uint8_t*)(254)
+#define OSCCAL_INDEX			(uint8_t*)(0)
+#define IS_CAL_INDEX			(uint8_t*)(1)
 #define TIMER_COMP_VAL			(F_CPU / 262144 * BUTTON_PRESS_TIME_MS / 1000)
 
 #define abs(x) 					((x) > 0 ? (x) : (-x))
@@ -255,9 +255,10 @@ void generateNewPassword() {
 				currentBit++;
 			}
 		}
+		result &= 0x0F;
 		password[i] = result;
 		eeprom_busy_wait();
-		eeprom_write_byte((uint8_t*)(i), result);
+		eeprom_write_byte((uint8_t*)(i+2), result);
 		#if PASSWORD_VISIBLE
 		write(hexToAscii(result));
 		#else
@@ -272,7 +273,7 @@ void generateNewPassword() {
 void readPassword() {
 	for (uint16_t i = 0; i < PASSWORD_LENGTH; i++) {
 		eeprom_busy_wait();
-		password[i] = eeprom_read_byte((uint8_t*)(i));
+		password[i] = eeprom_read_byte((uint8_t*)(i+2));
 		usbPoll();
 	}
 }
@@ -299,11 +300,6 @@ int main() {
 		OSCCAL = eeprom_read_byte(OSCCAL_INDEX);
 	}
 	
-	/*usbDeviceDisconnect(); // enforce re-enumeration
-	for(uint8_t i = 0; i<250; i++) { // wait 500 ms
-		_delay_ms(2);
-	}
-	usbDeviceConnect();*/
 	sei();
 	usbPoll();
 	readPassword();
@@ -414,7 +410,8 @@ usbMsgLen_t usbFunctionWrite(uint8_t* data, uchar len) {
 
 
 /* calibrate OSCCAL */
-void hadUsbReset() {
+void usbEventResetReady() {
+	cli();
 	eeprom_busy_wait();
 	if (eeprom_read_byte(IS_CAL_INDEX) == 1) {
 		eeprom_busy_wait();
@@ -430,11 +427,11 @@ void hadUsbReset() {
 		uint8_t region;
 
 		/* do a binary search in regions 0-127 and 128-255 to get optimum OSCCAL */
-		for(region = 0; region <= 1; region++) {
+		for (region = 0; region <= 1; region++) {
 			frameLength = 0;
 			trialCal = (region == 0) ? 0 : 128;
 			
-			for(step = 64; step > 0; step >>= 1) { 
+			for (step = 64; step > 0; step >>= 1) { 
 				if(frameLength < targetLength) {
 					trialCal += step;
 				}
@@ -445,17 +442,18 @@ void hadUsbReset() {
 				OSCCAL = trialCal;
 				frameLength = usbMeasureFrameLength();
 				
-				if(abs(frameLength-targetLength) < bestDeviation) {
+				if (abs(frameLength-targetLength) < bestDeviation) {
 					bestCal = trialCal;
-					bestDeviation = abs(frameLength - targetLength);
+					bestDeviation = abs(frameLength-targetLength);
 				}
 			}
 		}
 		
-		OSCCAL = bestCal;
 		eeprom_busy_wait();
 		eeprom_write_byte(OSCCAL_INDEX, bestCal);
 		eeprom_busy_wait();
 		eeprom_write_byte(IS_CAL_INDEX, 1);
+		OSCCAL = bestCal;
 	}
+	sei();
 }

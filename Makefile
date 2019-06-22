@@ -28,7 +28,7 @@ flash: main.hex
 	$(DUDE) $(DUDEFLAGS) -B 1 -U flash:w:$<
 
 fuses:
-	$(DUDE) $(DUDEFLAGS) -B 10 -U lfuse:w:0xe1:m -U hfuse:w:0xd7:m -U efuse:w:0xff:m 
+	$(DUDE) $(DUDEFLAGS) -B 10 -U lfuse:w:0xe1:m -U hfuse:w:0xdf:m -U efuse:w:0xff:m 
 
 
 # Housekeeping if you want it
