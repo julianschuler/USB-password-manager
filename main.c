@@ -10,12 +10,12 @@
 #include <directIO.h>
 
 
-#define PASSWORD_LENGTH			100
-#define SEND_RETURN				1
-#define PASSWORD_VISIBLE		0
-#define HEX_LETTERS_CAPITAL		1
-#define LANGUAGE				DE
-#define BUTTON_PRESS_TIME_MS	2500
+#define PASSWORD_LENGTH			100			// length of the generated and stored password
+#define SEND_RETURN				1			// set to 1 to send a return after the password has been typed
+#define PASSWORD_VISIBLE		0			// set to 1 to show the password during generation (not recommended)
+#define HEX_LETTERS_CAPITAL		1			// set to 1 to use capital letters in the password
+#define LANGUAGE				DE			// sets the language, available options: DE, EN
+#define BUTTON_PRESS_TIME_MS	2500		// mimimum time the button has to be pressed for generating a new password
 
 #if LANGUAGE == DE
 	#define CONF_MSG			"Drücken Sie vier Mal Caps Lock, um die Generierung eines neuen Passwortes zu bestätigen.\n"
@@ -24,8 +24,8 @@
 	#define LAYOUT				LAYOUT_DE
 #else
 	#define CONF_MSG			"Toggle Caps Lock four times to confirm the generation of a new password."
-	#define INIT_MSG			"Generating new password...\n\n"
-	#define DONE_MSG			"\n\nDone!"
+	#define INIT_MSG			"Generating new password...\n"
+	#define DONE_MSG			"\nDone!"
 	#define LAYOUT				LAYOUT_US
 #endif
 
@@ -290,25 +290,25 @@ void printPassword() {
 
 int main() {
 	cli();
-    usbInit();
-    setConfTimer0();
+	usbInit();
+	setConfTimer0();
 	setConfWDT();
-    eeprom_busy_wait();
-    if (eeprom_read_byte(IS_CAL_INDEX) == 1) {
+	eeprom_busy_wait();
+	if (eeprom_read_byte(IS_CAL_INDEX) == 1) {
 		eeprom_busy_wait();
 		OSCCAL = eeprom_read_byte(OSCCAL_INDEX);
 	}
 	
-    /*usbDeviceDisconnect(); // enforce re-enumeration
-    for(uint8_t i = 0; i<250; i++) { // wait 500 ms
-        _delay_ms(2);
-    }
-    usbDeviceConnect();*/
-    sei();
+	/*usbDeviceDisconnect(); // enforce re-enumeration
+	for(uint8_t i = 0; i<250; i++) { // wait 500 ms
+		_delay_ms(2);
+	}
+	usbDeviceConnect();*/
+	sei();
 	usbPoll();
 	readPassword();
 	
-    while(1) {
+	while(1) {
 		if (directRead(BUTTON_PIN) == 0) {
 			if (timer0Active == 0) {
 				enableOverflowINT();
@@ -337,9 +337,9 @@ int main() {
 			printPassword();
 		}
 		usbPoll();
-    }
+	}
 	
-    return 0;
+	return 0;
 }
 
 
@@ -415,7 +415,7 @@ usbMsgLen_t usbFunctionWrite(uint8_t* data, uchar len) {
 
 /* calibrate OSCCAL */
 void hadUsbReset() {
-    eeprom_busy_wait();
+	eeprom_busy_wait();
 	if (eeprom_read_byte(IS_CAL_INDEX) == 1) {
 		eeprom_busy_wait();
 		OSCCAL = eeprom_read_byte(OSCCAL_INDEX);
@@ -451,7 +451,7 @@ void hadUsbReset() {
 				}
 			}
 		}
-
+		
 		OSCCAL = bestCal;
 		eeprom_busy_wait();
 		eeprom_write_byte(OSCCAL_INDEX, bestCal);
